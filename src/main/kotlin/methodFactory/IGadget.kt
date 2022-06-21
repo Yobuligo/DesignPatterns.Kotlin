@@ -1,0 +1,3 @@
+package methodFactory
+
+interface IGadget {}
