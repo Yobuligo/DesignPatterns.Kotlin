@@ -1,0 +1,5 @@
+package gameLoop
+
+interface ILine {
+
+}
