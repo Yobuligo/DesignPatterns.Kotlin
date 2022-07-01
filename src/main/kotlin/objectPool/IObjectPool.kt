@@ -1,6 +1,6 @@
 package objectPool
 
 interface IObjectPool<T> {
-    fun checkOut(): T
-    fun checkIn(instance: T)
+    fun acquire(): T
+    fun release(instance: T)
 }

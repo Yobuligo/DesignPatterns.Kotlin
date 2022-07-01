@@ -8,19 +8,19 @@ package objectPool
 
 fun main() {
     val objectPool = ObjectPool { index -> Thread(index) }
-    val first = objectPool.checkOut()
+    val first = objectPool.acquire()
     println(first.index)
-    val second = objectPool.checkOut()
+    val second = objectPool.acquire()
     println(second.index)
-    val third = objectPool.checkOut()
+    val third = objectPool.acquire()
     println(third.index)
 
-    objectPool.checkIn(first)
-    val fourth = objectPool.checkOut()
+    objectPool.release(first)
+    val fourth = objectPool.acquire()
     println(fourth.index)
 
     try {
-        objectPool.checkOut()
+        objectPool.acquire()
     } catch (e: Exception) {
         println(e.message)
     }

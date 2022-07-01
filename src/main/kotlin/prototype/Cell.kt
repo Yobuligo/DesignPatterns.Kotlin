@@ -25,14 +25,14 @@ class Cell(
 
         _numberCloneOperations++
         println("'$name' was cloned")
-        val cell = Cell(
+        return Cell(
             "$name$numberCloneOperations",
             Nucleolus(nucleolus.name),
             CellMembrane(cellMembrane.name),
             Mitochondria(mitochondria.name),
             maxNumberCloneOperations
-        )
-        cell._numberCloneOperations = _numberCloneOperations
-        return cell
+        ).also {
+            it._numberCloneOperations = _numberCloneOperations
+        }
     }
 }

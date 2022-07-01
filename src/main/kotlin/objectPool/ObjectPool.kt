@@ -1,35 +1,37 @@
 package objectPool
 
 class ObjectPool<T>(private val maxNumberInstances: Int = 3, private val factory: (index: Int) -> T) : IObjectPool<T> {
-    private val locked = mutableListOf<T>()
-    private val unlocked = mutableListOf<T>()
+    private val acquired = mutableListOf<T>()
+    private val released = mutableListOf<T>()
 
-    override fun checkOut(): T {
-        return checkOutFromPool() ?: checkOutFromFactory()
-        ?: throw RuntimeException("No free objects available in Pool")
+    override fun acquire(): T {
+        return checkout(fetch())
     }
 
-    override fun checkIn(instance: T) {
-        locked.remove(instance)
-        unlocked.add(instance)
+    override fun release(instance: T) {
+        released.add(instance)
+        acquired.remove(instance)
     }
 
-    private fun checkOutFromPool(): T? {
-        return if (unlocked.size > 0) {
-            unlocked[0].apply {
-                locked.add(this)
-                unlocked.remove(this)
-            }
+    private fun fetch(): T {
+        return if (released.isNotEmpty()) {
+            released.first()
         } else {
-            null
+            create()
         }
     }
 
-    private fun checkOutFromFactory(): T? {
-        return if (locked.size < maxNumberInstances) {
-            factory.invoke(locked.size).apply { locked.add(this) }
+    private fun create(): T {
+        if (acquired.size < maxNumberInstances) {
+            return factory(acquired.size + 1)
         } else {
-            null
+            throw RuntimeException("No more objects available")
         }
+    }
+
+    private fun checkout(instance: T): T {
+        acquired.add(instance)
+        released.remove(instance)
+        return instance
     }
 }
